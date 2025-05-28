@@ -1,4 +1,4 @@
-FROM node:latest
+FROM --platform=linux/amd64 node:18-alpine
 
 RUN mkdir -p /app && chown -R node:node /app
 

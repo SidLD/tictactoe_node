@@ -183,7 +183,6 @@ export const getGameStatus = async (req: any, res: any) => {
   }
 };
 
-// Reset the game to initial state
 export const resetGame = async (req: any, res: any) => {
   const gameId = req.game._id;
 
@@ -211,6 +210,47 @@ export const resetGame = async (req: any, res: any) => {
     });
   } catch (error) {
     console.error(error);
+    return res.status(500).json({ message: 'Internal server error', error });
+  }
+};
+
+export const getGameHistory = async (req: any, res: any) => {
+  try {
+    const games = await Game.find({ isFinished: true })
+      .populate('playerX playerO')
+      .sort({ updatedAt: -1 }); // optional: latest first
+
+    const history = games.map((game) => {
+      const { playerX, playerO, board } = game;
+      const winner = checkWinner(
+        board,
+        { id: playerX._id!.toString(), username: playerX.username },
+        { id: playerO._id!.toString(), username: playerO.username }
+      );
+
+      return {
+        _id: game._id,
+        playerX: {
+          id: playerX._id,
+          username: playerX.username,
+        },
+        playerO: {
+          id: playerO._id,
+          username: playerO.username,
+        },
+        winner: winner
+          ? winner
+          : game.status === 'draw'
+          ? 'Draw'
+          : 'Won', 
+        status: game.status,
+        board: game.board,
+      };
+    });
+
+    return res.status(200).json({ history });
+  } catch (error) {
+    console.error('Error fetching game history:', error);
     return res.status(500).json({ message: 'Internal server error', error });
   }
 };
