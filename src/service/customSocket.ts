@@ -11,7 +11,7 @@ const allowedOrigins = [
   SERVER_URI,
   FRONT_URI
 ];
-console.log(allowedOrigins)
+console.log(chalk.green(`Allowed Origin for Socket ${JSON.stringify(allowedOrigins)}`));
 
 export const initializeSocket = (server:any) => {
   io = new SocketIOServer(server, {

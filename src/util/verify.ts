@@ -15,11 +15,13 @@ export const verifyToken = async (req: any, res: any, next: any) => {
                     message: "Failed to Authenticate",
                     err: err
                 })
-                req.user.id = decoded.id;
-                req.user.firstName = decoded.firstName;
-                req.user.lastName = decoded.lastName;
-                req.user.role = decoded.role
-                req.user.hospital = decoded.hospital
+                  req.game = {
+                     _id: decoded.gameId,
+                     players:{
+                        playerX:  decoded.players[0],
+                        playerO:  decoded.players[1]
+                     }, 
+                 };
                 next(); 
             })
         }else{

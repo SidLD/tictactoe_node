@@ -1,12 +1,19 @@
 import express from 'express';
-import { verifyAdmin, verifyToken } from '../util/verify';
+import { verifyToken } from '../util/verify';
 import {
-  registerGame 
+  addMoveToGame,
+  getGameStatus,
+  getPlayersStatus,
+  registerGame, 
+  resetGame
 } from '../controller/gameController';
 
 const gameAPI = express();
 
-// Add game registration route
 gameAPI.post('/register-game', registerGame);
+gameAPI.get('/player-details', verifyToken, getPlayersStatus);
+gameAPI.put('/player-move', verifyToken, addMoveToGame);
+gameAPI.post('/reset-game', verifyToken, resetGame);
+gameAPI.get('/game-status', verifyToken, getGameStatus);
 
 export default gameAPI;

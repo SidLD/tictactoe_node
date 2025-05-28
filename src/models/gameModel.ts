@@ -1,34 +1,20 @@
 import { Schema, model, Document, Types } from 'mongoose';
+import { UserType } from './userModel';
 
 export type Cell = 'X' | 'O' | null;
 
-interface ActionLog {
-  index: number;
-  symbol: 'X' | 'O';
-  player: Types.ObjectId;
-  timestamp: Date;
-}
-
 export interface IGameDoc extends Document {
   _id: string;
-  playerX: Types.ObjectId;
-  playerO: Types.ObjectId;
+  playerX: UserType;
+  playerO: UserType;
   board: Cell[];
   turn: 'X' | 'O';
   winner: 'X' | 'O' | 'Draw' | null;
+  status: 'playing' | 'draw' | 'won'
+  winnerId: UserType | string;
   isFinished: boolean;
-  logs: ActionLog[];
+  logs: String[];
 }
-
-const actionLogSchema = new Schema<ActionLog>(
-  {
-    index: { type: Number, required: true },
-    symbol: { type: String, enum: ['X', 'O'], required: true },
-    player: { type: Schema.Types.ObjectId, ref: 'User', required: true },
-    timestamp: { type: Date, default: Date.now },
-  },
-  { _id: false }
-);
 
 const gameSchema = new Schema<IGameDoc>(
   {
@@ -40,8 +26,10 @@ const gameSchema = new Schema<IGameDoc>(
     },
     turn: { type: String, enum: ['X', 'O'], default: 'X' },
     winner: { type: String, enum: ['X', 'O', 'Draw', null], default: null },
+    winnerId: { type: String },
+    status: { type: String },
     isFinished: { type: Boolean, default: false },
-    logs: [actionLogSchema],
+    logs: [String],
   },
   { timestamps: true }
 );
